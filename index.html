@@ -1,0 +1,1344 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cargo Exception Manager | Powerhouse Logistics Synergy Engine</title>
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'sans-serif'],
+                        mono: ['"JetBrains Mono"', 'Consolas', 'Monaco', 'monospace'],
+                    },
+                    colors: {
+                        navy: {
+                            900: '#07162c',
+                            800: '#0b1e36',
+                            700: '#0f2b4c',
+                            600: '#173d69',
+                        },
+                        brand: {
+                            blue: '#1d4ed8',
+                            darkblue: '#1e3a8a',
+                            orange: '#ea580c',
+                            orangeHover: '#c2410c',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Google Fonts & Font Awesome Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- Chart.js & jsPDF / jsPDF-AutoTable CDN links -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f1f5f9;
+            color: #0f172a;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 9999px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        /* Spinner */
+        .spinner {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #ffffff;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Modal Animation */
+        @keyframes modalPop {
+            from {
+                opacity: 0;
+                transform: scale(0.96);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .animate-modal {
+            animation: modalPop 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        /* Toast Animation */
+        @keyframes toastIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .toast-enter {
+            animation: toastIn 0.25s ease-out;
+        }
+    </style>
+</head>
+
+<body class="min-h-screen flex flex-col antialiased">
+
+    <!-- ========================================================================= -->
+    <!-- 1. HEADER (NAVBAR)                                                       -->
+    <!-- ========================================================================= -->
+    <header class="bg-[#0b1e36] border-b border-[#172e4d] sticky top-0 z-40 shadow-lg px-4 lg:px-8 py-3">
+        <div class="max-w-[1440px] mx-auto flex flex-col md:flex-row items-center justify-between gap-3">
+
+            <!-- Left: Logo & Brand Information -->
+            <div class="flex items-center gap-3.5 w-full md:w-auto justify-between md:justify-start">
+                <div class="flex items-center gap-3">
+                    <div
+                        class="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-600 via-blue-500 to-indigo-600 flex items-center justify-center text-white text-lg shadow-md shadow-blue-600/30 border border-blue-400/30">
+                        <i class="fa-solid fa-boxes-stacked"></i>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <h1 class="text-white font-extrabold text-lg tracking-tight leading-none">Cargo Exception
+                                Manager</h1>
+                            <span
+                                class="bg-blue-500/20 text-blue-400 border border-blue-400/40 text-[10px] font-bold px-2 py-0.5 rounded tracking-wider uppercase">ENTERPRISE
+                                AI</span>
+                        </div>
+                        <p class="text-slate-400 text-xs font-medium tracking-wide mt-0.5">Powerhouse Logistics Synergy
+                            Engine</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: Connection Pill & Export Action Buttons -->
+            <div class="flex items-center gap-2.5 w-full md:w-auto justify-end">
+                <!-- Connected Status Pill -->
+                <div
+                    class="bg-[#122b4a] border border-[#1e4270] text-slate-300 text-xs px-3 py-1.5 rounded-full flex items-center gap-2 font-medium shadow-inner">
+                    <span
+                        class="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.9)] animate-pulse"></span>
+                    <span class="truncate max-w-[200px] sm:max-w-none">Connected: <strong
+                            class="text-white font-semibold">operator@powerhouse.com</strong></span>
+                </div>
+
+                <!-- Export PDF Button -->
+                <button onclick="exportPDF()"
+                    class="bg-[#2563eb] hover:bg-[#1d4ed8] text-white text-xs font-semibold px-3 py-1.5 rounded-md flex items-center gap-1.5 transition shadow-sm border border-blue-500/50 hover:shadow cursor-pointer"
+                    title="Export incident records to PDF report">
+                    <i class="fa-solid fa-file-pdf"></i>
+                    <span>Export PDF</span>
+                </button>
+
+                <!-- Export CSV Button -->
+                <button onclick="exportCSV()"
+                    class="bg-[#172e4d] hover:bg-[#203c63] border border-[#2a4d7c] text-slate-200 text-xs font-semibold px-3 py-1.5 rounded-md flex items-center gap-1.5 transition hover:text-white cursor-pointer"
+                    title="Export incident records to CSV spreadsheet">
+                    <i class="fa-solid fa-file-csv"></i>
+                    <span>CSV</span>
+                </button>
+            </div>
+
+        </div>
+    </header>
+
+    <!-- ========================================================================= -->
+    <!-- MAIN CONTENT CONTAINER                                                    -->
+    <!-- ========================================================================= -->
+    <main class="max-w-[1440px] mx-auto w-full px-4 lg:px-8 py-5 space-y-5 flex-1">
+
+        <!-- ===================================================================== -->
+        <!-- 2. ANALYTICS ROW (TOP SECTION)                                        -->
+        <!-- ===================================================================== -->
+        <section class="grid grid-cols-1 lg:grid-cols-12 gap-5">
+
+            <!-- Left Chart Card (7 Cols) -->
+            <div
+                class="lg:col-span-8 bg-white rounded-xl border border-slate-200 shadow-sm p-4 flex flex-col justify-between">
+                <div class="flex items-start justify-between mb-2">
+                    <div class="flex items-center gap-2.5">
+                        <div
+                            class="w-7 h-7 rounded-md bg-blue-50 text-blue-600 flex items-center justify-center text-sm border border-blue-100">
+                            <i class="fa-solid fa-chart-column"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-slate-800 font-bold text-sm tracking-tight">Exceptions Distribution by Type
+                            </h2>
+                            <p class="text-slate-400 text-xs font-normal">Real-time incident frequency breakdown</p>
+                        </div>
+                    </div>
+                    <span id="totalIncidentsBadge"
+                        class="bg-blue-50 text-blue-700 border border-blue-200 text-[11px] font-bold px-2.5 py-0.5 rounded-full shadow-2xs">0
+                        Total Incidents</span>
+                </div>
+
+                <!-- Chart Canvas Container -->
+                <div class="relative w-full h-[180px] mt-1">
+                    <canvas id="exceptionsChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Right KPI Stack (4 Cols) -->
+            <div class="lg:col-span-4 flex flex-col gap-3">
+
+                <!-- Financial Impact KPI Card -->
+                <div
+                    class="bg-gradient-to-b from-white via-red-50/20 to-red-50/50 rounded-xl border border-red-200 shadow-sm p-4 flex flex-col justify-between">
+                    <div class="flex items-center justify-between">
+                        <span class="text-red-600 font-extrabold text-[11px] tracking-wider uppercase">EST. FINANCIAL
+                            IMPACT</span>
+                        <span class="text-lg" title="Estimated Financial Impact">💰</span>
+                    </div>
+                    <div class="my-1.5">
+                        <div class="flex items-baseline gap-1.5">
+                            <span id="estFinancialImpact"
+                                class="text-3xl font-black text-red-600 tracking-tight">$0.00</span>
+                            <span class="text-xs font-bold text-red-500 uppercase">USD</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-1.5 text-[11px] text-slate-500 font-medium">
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 inline-block"></span>
+                        <span>Based on formula: <code
+                                class="font-mono text-slate-700 font-semibold bg-slate-100 px-1 py-0.5 rounded text-[10px]">delay_days × $150/day</code></span>
+                    </div>
+                </div>
+
+                <!-- Secondary Metric Cards Subgrid -->
+                <div class="grid grid-cols-2 gap-3">
+
+                    <!-- Critical / High KPI -->
+                    <div
+                        class="bg-white rounded-xl border border-slate-200 shadow-sm p-3.5 flex flex-col justify-between">
+                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">CRITICAL /
+                            HIGH</span>
+                        <span id="criticalHighCount" class="text-2xl font-black text-amber-600 my-0.5">0</span>
+                        <span class="text-[11px] text-slate-400 font-medium">SOP Compliance checks</span>
+                    </div>
+
+                    <!-- Monitored Cargo KPI -->
+                    <div
+                        class="bg-white rounded-xl border border-slate-200 shadow-sm p-3.5 flex flex-col justify-between">
+                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">MONITORED
+                            CARGO</span>
+                        <span id="monitoredCargoCount" class="text-2xl font-black text-blue-600 my-0.5">0</span>
+                        <span class="text-[11px] text-slate-400 font-medium">Active B/L records</span>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- ===================================================================== -->
+        <!-- 3. FORMS ROW (MIDDLE SECTION)                                         -->
+        <!-- ===================================================================== -->
+        <section class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+
+            <!-- Left Form: Register New Shipment -->
+            <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4 flex flex-col justify-between">
+                <div class="flex items-start justify-between mb-3">
+                    <div class="flex items-center gap-2.5">
+                        <div
+                            class="w-7 h-7 rounded-md bg-amber-50 text-amber-700 flex items-center justify-center text-sm border border-amber-100">
+                            <i class="fa-solid fa-box-open"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-slate-800 font-bold text-sm tracking-tight">Register New Shipment</h2>
+                            <p class="text-slate-400 text-xs font-normal">Add B/L details into the cargo tracking
+                                database</p>
+                        </div>
+                    </div>
+                    <span
+                        class="bg-slate-100 text-slate-600 border border-slate-200 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">MongoDB</span>
+                </div>
+
+                <form id="shipmentForm" onsubmit="handleShipmentSubmit(event)" class="space-y-3">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                            <label for="blNumber" class="block text-xs font-semibold text-slate-700 mb-1">
+                                Bill of Lading (B/L) # <span class="text-red-500">*</span>
+                            </label>
+                            <input type="text" id="blNumber" placeholder="e.g., MEDU1234567" required
+                                class="w-full px-3 py-1.5 text-xs font-mono bg-white border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition placeholder-slate-400">
+                        </div>
+                        <div>
+                            <label for="containerId" class="block text-xs font-semibold text-slate-700 mb-1">
+                                Container ID <span class="text-red-500">*</span>
+                            </label>
+                            <input type="text" id="containerId" placeholder="e.g., MSKU9876543" required
+                                class="w-full px-3 py-1.5 text-xs font-mono bg-white border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition placeholder-slate-400">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                            <label for="originPort" class="block text-xs font-semibold text-slate-700 mb-1">
+                                Origin Port <span class="text-red-500">*</span>
+                            </label>
+                            <input type="text" id="originPort" placeholder="Shanghai Port (CNSHA)" required
+                                class="w-full px-3 py-1.5 text-xs bg-white border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition placeholder-slate-400">
+                        </div>
+                        <div>
+                            <label for="destPort" class="block text-xs font-semibold text-slate-700 mb-1">
+                                Destination Port <span class="text-red-500">*</span>
+                            </label>
+                            <input type="text" id="destPort" placeholder="Port of Long Beach (USLGB)" required
+                                class="w-full px-3 py-1.5 text-xs bg-white border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition placeholder-slate-400">
+                        </div>
+                    </div>
+
+                    <button type="submit" id="btnSaveShipment"
+                        class="w-full bg-[#1b3a6b] hover:bg-[#142d54] text-white text-xs font-bold py-2 px-4 rounded-md transition shadow-sm flex items-center justify-center gap-2 hover:shadow cursor-pointer">
+                        <i class="fa-solid fa-floppy-disk"></i>
+                        <span>Save Shipment to Registry</span>
+                    </button>
+                </form>
+            </div>
+
+            <!-- Right Form: Trigger AI Exception Engine -->
+            <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4 flex flex-col justify-between">
+                <div class="flex items-start justify-between mb-3">
+                    <div class="flex items-center gap-2.5">
+                        <div
+                            class="w-7 h-7 rounded-md bg-amber-50 text-amber-500 flex items-center justify-center text-sm border border-amber-200">
+                            <i class="fa-solid fa-bolt-lightning"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-slate-800 font-bold text-sm tracking-tight">Trigger AI Exception Engine</h2>
+                            <p class="text-slate-400 text-xs font-normal">Initiate LangGraph multi-agent diagnosis &
+                                drafting</p>
+                        </div>
+                    </div>
+                    <span
+                        class="bg-amber-50 text-amber-700 border border-amber-200 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">LangGraph
+                        Agent</span>
+                </div>
+
+                <form id="exceptionForm" onsubmit="handleExceptionSubmit(event)" class="space-y-3">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                            <label for="shipmentSelect" class="block text-xs font-semibold text-slate-700 mb-1">
+                                Select Shipment <span class="text-red-500">*</span>
+                            </label>
+                            <select id="shipmentSelect" required
+                                class="w-full px-3 py-1.5 text-xs bg-white border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition cursor-pointer">
+                                <option value="">-- Choose Shipment --</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="exceptionType" class="block text-xs font-semibold text-slate-700 mb-1">
+                                Exception Type <span class="text-red-500">*</span>
+                            </label>
+                            <select id="exceptionType" onchange="updateCostPreview()" required
+                                class="w-full px-3 py-1.5 text-xs bg-white border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition cursor-pointer">
+                                <option value="Shipment delay">Shipment delay</option>
+                                <option value="Cargo damage report">Cargo damage report</option>
+                                <option value="Customs hold">Customs hold</option>
+                                <option value="Reroute / Diversion">Reroute / Diversion</option>
+                                <option value="Documentation mismatch">Documentation mismatch</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                            <label for="delayDays" class="block text-xs font-semibold text-slate-700 mb-1">
+                                Estimated Delay Days <span class="text-slate-400 font-normal">($150/day)</span>
+                            </label>
+                            <input type="number" id="delayDays" value="2" min="0" step="0.5"
+                                oninput="updateCostPreview()" placeholder="2"
+                                class="w-full px-3 py-1.5 text-xs bg-white border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition placeholder-slate-400">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">Estimated Cost
+                                Calculation:</label>
+                            <div class="h-[34px] px-3 bg-red-50/50 border border-red-100 rounded-md flex items-center">
+                                <span id="calcCostDisplay" class="text-xs font-bold text-red-600">$300.00 USD</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label for="description" class="block text-xs font-semibold text-slate-700 mb-1">
+                            Detailed Description <span class="text-red-500">*</span>
+                        </label>
+                        <textarea id="description" rows="2"
+                            placeholder="e.g., Customs hold exceeding 48 hours awaiting fumigation certificates..."
+                            required
+                            class="w-full px-3 py-1.5 text-xs bg-white border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition placeholder-slate-400 resize-y"></textarea>
+                    </div>
+
+                    <button type="submit" id="btnRunAgent"
+                        class="w-full bg-[#ea580c] hover:bg-[#c2410c] text-white text-xs font-bold py-2 px-4 rounded-md transition shadow-md shadow-orange-500/20 flex items-center justify-center gap-2 hover:shadow cursor-pointer">
+                        <i class="fa-solid fa-robot"></i>
+                        <span>Run Multi-Agent Analysis</span>
+                    </button>
+                </form>
+            </div>
+
+        </section>
+
+        <!-- ===================================================================== -->
+        <!-- 4. TABLE ROW (REGISTERED ACTIVE SHIPMENTS)                            -->
+        <!-- ===================================================================== -->
+        <section class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+            <div class="flex items-center justify-between mb-3">
+                <div class="flex items-center gap-2.5">
+                    <div
+                        class="w-7 h-7 rounded-md bg-blue-50 text-blue-600 flex items-center justify-center text-sm border border-blue-100">
+                        <i class="fa-solid fa-ship"></i>
+                    </div>
+                    <h2 class="text-slate-800 font-bold text-sm tracking-tight">Registered Active Shipments</h2>
+                </div>
+                <button onclick="loadAllData()"
+                    class="bg-white hover:bg-slate-50 border border-slate-200 text-blue-600 hover:text-blue-700 text-xs font-semibold px-2.5 py-1 rounded-md transition flex items-center gap-1.5 shadow-2xs hover:border-slate-300 cursor-pointer">
+                    <i class="fa-solid fa-arrows-rotate"></i>
+                    <span>Refresh</span>
+                </button>
+            </div>
+
+            <div class="overflow-x-auto rounded-lg border border-slate-200">
+                <table class="min-w-full divide-y divide-slate-200 text-left text-xs">
+                    <thead class="bg-slate-50/90 text-slate-500 font-bold uppercase tracking-wider text-[11px]">
+                        <tr>
+                            <th scope="col" class="px-3.5 py-2.5">B/L NUMBER</th>
+                            <th scope="col" class="px-3.5 py-2.5">CONTAINER ID</th>
+                            <th scope="col" class="px-3.5 py-2.5">ROUTE</th>
+                            <th scope="col" class="px-3.5 py-2.5">CURRENT STATUS</th>
+                            <th scope="col" class="px-3.5 py-2.5">LOGGED AT</th>
+                        </tr>
+                    </thead>
+                    <tbody id="shipmentsTableBody" class="divide-y divide-slate-100 bg-white">
+                        <tr>
+                            <td colspan="5" class="px-3.5 py-6 text-center text-slate-400">Loading shipments...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- ===================================================================== -->
+        <!-- 5. OUTPUTS SECTION (AI SYSTEM OUTPUTS & INCIDENT LOGS)                 -->
+        <!-- ===================================================================== -->
+        <section class="space-y-3">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2.5">
+                    <div
+                        class="w-7 h-7 rounded-md bg-slate-100 text-slate-700 flex items-center justify-center text-sm border border-slate-200">
+                        <i class="fa-solid fa-robot"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-slate-800 font-bold text-base tracking-tight leading-none">AI System Outputs &
+                            Incident Logs</h2>
+                        <p class="text-slate-400 text-xs font-normal mt-0.5">Autonomous severity classification, client
+                            notifications, and escalation actions</p>
+                    </div>
+                </div>
+                <span id="recordsCountBadge"
+                    class="bg-blue-50 text-blue-700 border border-blue-200 text-[11px] font-bold px-2.5 py-0.5 rounded-full shadow-2xs">0
+                    Records</span>
+            </div>
+
+            <!-- Feed Container for Dynamic Exception Cards -->
+            <div id="exceptionsFeed" class="space-y-4">
+                <div class="bg-white rounded-xl border border-slate-200 p-8 text-center text-slate-400 text-xs">
+                    Loading AI incident records...
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ========================================================================= -->
+    <!-- CARRIER ESCALATION MODAL                                                  -->
+    <!-- ========================================================================= -->
+    <div id="escalationModal"
+        class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 hidden items-center justify-center p-4">
+        <div
+            class="bg-white rounded-xl max-w-2xl w-full border border-slate-200 shadow-2xl overflow-hidden flex flex-col animate-modal max-h-[90vh]">
+
+            <!-- Modal Header -->
+            <div class="bg-[#0b1e36] px-5 py-3.5 flex items-center justify-between text-white">
+                <div class="flex items-center gap-2.5">
+                    <span class="text-amber-400 text-base"><i class="fa-solid fa-triangle-exclamation"></i></span>
+                    <h3 class="font-bold text-sm tracking-tight">Carrier Escalation Letter Draft</h3>
+                </div>
+                <button onclick="closeEscalationModal()"
+                    class="text-slate-400 hover:text-white transition text-lg leading-none cursor-pointer">
+                    &times;
+                </button>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="p-5 space-y-4 overflow-y-auto">
+                <!-- Meta Info Row -->
+                <div
+                    class="bg-slate-50 border border-slate-200 rounded-lg p-3 grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                    <div><strong class="text-slate-500">Carrier:</strong> <span id="modalCarrierName"
+                            class="text-slate-800 font-semibold">-</span></div>
+                    <div><strong class="text-slate-500">Urgency:</strong> <span id="modalSeverity"
+                            class="bg-red-50 text-red-600 border border-red-200 text-[10px] font-bold px-2 py-0.5 rounded uppercase">Critical</span>
+                    </div>
+                    <div class="sm:col-span-2"><strong class="text-slate-500">Subject:</strong> <span id="modalSubject"
+                            class="text-slate-800 font-semibold font-mono text-[11px]">-</span></div>
+                </div>
+
+                <!-- Draft Text Content -->
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1.5">Formal Escalation Email
+                        Draft:</label>
+                    <textarea id="modalDraftContent" readonly
+                        class="w-full h-64 p-3 text-xs font-mono bg-slate-50 border border-slate-200 rounded-lg focus:outline-none text-slate-800 leading-relaxed resize-none"></textarea>
+                </div>
+            </div>
+
+            <!-- Modal Footer -->
+            <div
+                class="bg-slate-50 px-5 py-3 border-t border-slate-200 flex flex-wrap items-center justify-end gap-2.5">
+                <button onclick="copyEscalationToClipboard()"
+                    class="bg-slate-700 hover:bg-slate-800 text-white text-xs font-semibold px-3.5 py-1.5 rounded-md flex items-center gap-1.5 transition shadow-sm cursor-pointer"
+                    title="Copy escalation text to clipboard">
+                    <i class="fa-solid fa-copy"></i>
+                    <span>Copy Draft</span>
+                </button>
+                <button onclick="openEscalationInWhatsApp()"
+                    class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold px-3.5 py-1.5 rounded-md flex items-center gap-1.5 transition shadow-sm cursor-pointer"
+                    title="Send formal escalation via WhatsApp in new tab">
+                    <i class="fa-brands fa-whatsapp"></i>
+                    <span>Send WhatsApp</span>
+                </button>
+                <button onclick="openEscalationInEmail()"
+                    class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold px-3.5 py-1.5 rounded-md flex items-center gap-1.5 transition shadow-sm cursor-pointer"
+                    title="Send formal escalation via Email client in new tab">
+                    <i class="fa-solid fa-paper-plane"></i>
+                    <span>Send Email</span>
+                </button>
+                <button onclick="closeEscalationModal()"
+                    class="bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs font-semibold px-3.5 py-1.5 rounded-md transition cursor-pointer">
+                    <span>Close</span>
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Hidden Mailto Target Iframe as fallback helper -->
+    <iframe id="mailtoTarget" name="mailtoTarget" class="hidden"
+        style="display:none;width:0;height:0;border:0;"></iframe>
+
+    <!-- Toast Notification Container -->
+    <div id="toastContainer" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+    <!-- ========================================================================= -->
+    <!-- APPLICATION JAVASCRIPT LOGIC                                              -->
+    <!-- ========================================================================= -->
+    <script>
+        // API Base URL - Configured to talk directly to http://localhost:8000/api
+        const API_BASE = window.location.protocol.startsWith('http') && window.location.port !== '5500' && window.location.port !== '3000' && window.location.port !== '5173' && window.location.port !== ''
+            ? ''
+            : 'http://127.0.0.1:8000';
+
+        let shipmentsList = [];
+        let exceptionsList = [];
+        let chartInstance = null;
+        let activeEscalationData = null;
+
+        // =========================================================================
+        // 1. GLOBALLY ACCESSIBLE ACTION HANDLERS (DEFINED AT TOP OF SCRIPT)
+        // =========================================================================
+
+        /**
+         * Global WhatsApp sender: Opens WhatsApp Web in a new tab/window
+         * @param {string} body - Text content or AI draft message
+         */
+        function sendWhatsApp(body) {
+            console.log("sendWhatsApp button clicked:", body);
+            if (!body) {
+                showToast('No drafted text available to send via WhatsApp.', 'error');
+                return;
+            }
+            const cleanText = body.replace(/\[Subject:.*?\]\n*/i, '').trim();
+            const waUrl = `https://wa.me/?text=${encodeURIComponent(cleanText)}`;
+            window.open(waUrl, '_blank');
+        }
+
+        /**
+         * Global Email sender: Opens Email compose in a new tab/window without disrupting dashboard
+         * @param {string} body - Draft content
+         * @param {string} exceptionType - Optional exception type for subject
+         */
+        function sendEmail(body, exceptionType) {
+            console.log("sendEmail button clicked:", { body, exceptionType });
+            let draftBody = body || '';
+            let excType = exceptionType || '';
+
+            // Handle parameter flexibility
+            if (body && exceptionType && body.length < exceptionType.length && !body.includes('\n')) {
+                excType = body;
+                draftBody = exceptionType;
+            }
+
+            if (!draftBody) {
+                showToast('No drafted text available to send via Email.', 'error');
+                return;
+            }
+
+            let subject = `Urgent Shipment Update${excType ? ' - ' + excType : ''}`;
+            let textContent = draftBody;
+
+            const subjectMatch = draftBody.match(/\[Subject:\s*(.*?)\]/i);
+            if (subjectMatch) {
+                subject = subjectMatch[1];
+                textContent = draftBody.replace(/\[Subject:.*?\]\n*/i, '').trim();
+            }
+
+            const mailtoUrl = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(textContent)}`;
+            window.open(mailtoUrl, '_blank');
+        }
+
+        /**
+         * Global Carrier Escalation trigger: calls API and opens escalation modal
+         * @param {string} shipmentId - Shipment ID or Exception ID
+         * @param {string} exceptionId - Optional Exception ID
+         */
+        async function triggerEscalation(shipmentId, exceptionId) {
+            console.log("triggerEscalation button clicked:", { shipmentId, exceptionId });
+            showToast('Generating formal carrier escalation...', 'info');
+
+            let excId = exceptionId || shipmentId;
+            let shipId = shipmentId;
+
+            // Match exception if shipmentId was passed as exception ID
+            const excMatch = exceptionsList.find(e => (e._id || e.id) === shipmentId);
+            if (excMatch) {
+                excId = excMatch._id || excMatch.id;
+                shipId = excMatch.shipment_id || exceptionId || '';
+            }
+
+            try {
+                const payload = {
+                    exception_id: excId,
+                    shipment_id: shipId,
+                    carrier_name: 'Carrier Operations & Dispatch Management',
+                    urgency: 'Critical',
+                    additional_notes: 'Urgent intervention and corrective resolution plan required within 4 hours.'
+                };
+
+                const res = await fetch(`${API_BASE}/api/exceptions/escalate`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!res.ok) {
+                    const err = await res.json();
+                    throw new Error(err.detail || 'Escalation request failed');
+                }
+
+                const escalation = await res.json();
+                activeEscalationData = escalation;
+
+                // Populate and display modal
+                document.getElementById('modalCarrierName').innerText = escalation.carrier_name || 'Carrier Operations';
+                document.getElementById('modalSubject').innerText = escalation.subject || 'Urgent Escalation Notice';
+                document.getElementById('modalSeverity').innerText = escalation.severity || 'Critical';
+                document.getElementById('modalDraftContent').value = escalation.email_draft || '';
+
+                const modal = document.getElementById('escalationModal');
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+
+                showToast('Formal carrier escalation generated!', 'success');
+                fetchExceptions();
+            } catch (err) {
+                console.error("Escalation error:", err);
+                showToast(err.message, 'error');
+            }
+        }
+
+        // Modal Action Handlers using window.open(..., '_blank')
+        function openEscalationInEmail() {
+            console.log("Modal Send Email clicked");
+            const content = document.getElementById('modalDraftContent').value || (activeEscalationData ? activeEscalationData.email_draft : '');
+            const subject = (activeEscalationData && activeEscalationData.subject) ? activeEscalationData.subject : 'Urgent Carrier Escalation Notice';
+            const mailtoUrl = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(content)}`;
+            window.open(mailtoUrl, '_blank');
+        }
+
+        function openEscalationInWhatsApp() {
+            console.log("Modal Send WhatsApp clicked");
+            const content = document.getElementById('modalDraftContent').value || (activeEscalationData ? activeEscalationData.email_draft : '');
+            const waUrl = `https://wa.me/?text=${encodeURIComponent(content)}`;
+            window.open(waUrl, '_blank');
+        }
+
+        function closeEscalationModal() {
+            console.log("Close Modal clicked");
+            const modal = document.getElementById('escalationModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function copyEscalationToClipboard() {
+            console.log("Copy Draft button clicked");
+            const content = document.getElementById('modalDraftContent').value;
+            navigator.clipboard.writeText(content).then(() => {
+                showToast('Escalation draft copied to clipboard!', 'success');
+            }).catch(() => {
+                showToast('Failed to copy to clipboard.', 'error');
+            });
+        }
+
+        // Explicit Global Bindings
+        window.sendWhatsApp = sendWhatsApp;
+        window.sendEmail = sendEmail;
+        window.sendDraftEmail = sendEmail;
+        window.triggerEscalation = triggerEscalation;
+        window.openEscalationInEmail = openEscalationInEmail;
+        window.openEscalationInWhatsApp = openEscalationInWhatsApp;
+        window.closeEscalationModal = closeEscalationModal;
+        window.copyEscalationToClipboard = copyEscalationToClipboard;
+
+        // Initialize on DOM Ready
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log("DOM loaded: Initializing Cargo Exception Manager Dashboard");
+            initChart();
+            updateCostPreview();
+            loadAllData();
+        });
+
+        // --- TOAST NOTIFICATIONS ---
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast-enter pointer-events-auto bg-slate-900 text-white text-xs font-medium px-4 py-2.5 rounded-lg shadow-xl flex items-center gap-2.5 border-l-4 ${type === 'success' ? 'border-emerald-500' : type === 'error' ? 'border-red-500' : 'border-blue-500'
+                }`;
+
+            let icon = 'fa-circle-info text-blue-400';
+            if (type === 'success') icon = 'fa-circle-check text-emerald-400';
+            if (type === 'error') icon = 'fa-triangle-exclamation text-red-400';
+
+            toast.innerHTML = `<i class="fa-solid ${icon}"></i> <span>${message}</span>`;
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateX(100%)';
+                toast.style.transition = 'all 0.25s ease-out';
+                setTimeout(() => toast.remove(), 250);
+            }, 3500);
+        }
+
+        // --- CHART.JS INITIALIZATION & DATA SYNC ---
+        function initChart() {
+            const ctx = document.getElementById('exceptionsChart').getContext('2d');
+            chartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Shipment delay', 'Cargo damage report', 'Customs hold', 'Reroute / Diversion', 'Documentation mismatch'],
+                    datasets: [{
+                        label: 'Incidents',
+                        data: [0, 0, 0, 0, 0],
+                        backgroundColor: [
+                            '#3b82f6', // blue
+                            '#f87171', // coral/red
+                            '#f59e0b', // amber
+                            '#64748b', // slate
+                            '#475569'  // dark slate
+                        ],
+                        borderRadius: 4,
+                        barThickness: 32,
+                        maxBarThickness: 44
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: '#0f172a',
+                            titleFont: { size: 11, family: 'Inter', weight: 'bold' },
+                            bodyFont: { size: 11, family: 'Inter' },
+                            padding: 8,
+                            cornerRadius: 6
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                stepSize: 1,
+                                font: { size: 10, family: 'Inter' },
+                                color: '#94a3b8'
+                            },
+                            grid: { color: '#f1f5f9' }
+                        },
+                        x: {
+                            ticks: {
+                                font: { size: 9, family: 'Inter', weight: 500 },
+                                color: '#475569',
+                                callback: function (val, index) {
+                                    const raw = this.getLabelForValue(val);
+                                    return raw.length > 16 ? raw.substring(0, 14) + '..' : raw;
+                                }
+                            },
+                            grid: { display: false }
+                        }
+                    }
+                }
+            });
+        }
+
+        function updateChartData(exceptions) {
+            if (!chartInstance) return;
+
+            const counts = {
+                'Shipment delay': 0,
+                'Cargo damage report': 0,
+                'Customs hold': 0,
+                'Reroute / Diversion': 0,
+                'Documentation mismatch': 0
+            };
+
+            exceptions.forEach(exc => {
+                const type = (exc.exception_type || '').trim();
+                if (counts[type] !== undefined) {
+                    counts[type]++;
+                } else if (type.toLowerCase().includes('delay')) {
+                    counts['Shipment delay']++;
+                } else if (type.toLowerCase().includes('damage')) {
+                    counts['Cargo damage report']++;
+                } else if (type.toLowerCase().includes('customs')) {
+                    counts['Customs hold']++;
+                } else if (type.toLowerCase().includes('reroute') || type.toLowerCase().includes('diversion')) {
+                    counts['Reroute / Diversion']++;
+                } else {
+                    counts['Documentation mismatch']++;
+                }
+            });
+
+            chartInstance.data.datasets[0].data = [
+                counts['Shipment delay'],
+                counts['Cargo damage report'],
+                counts['Customs hold'],
+                counts['Reroute / Diversion'],
+                counts['Documentation mismatch']
+            ];
+            chartInstance.update();
+        }
+
+        // --- LIVE FORM COST CALCULATION ---
+        function updateCostPreview() {
+            const excType = (document.getElementById('exceptionType').value || '').trim();
+            const excTypeLower = excType.toLowerCase();
+            const daysInput = parseFloat(document.getElementById('delayDays').value) || 0;
+            const calcDisplay = document.getElementById('calcCostDisplay');
+
+            if (!calcDisplay) return;
+
+            let estCost = 0;
+
+            if (excTypeLower.includes('delay')) {
+                // Shipment delay: delay_days * 150
+                estCost = daysInput * 150;
+            } else if (excTypeLower.includes('customs')) {
+                // Customs hold: Fixed cost of 500 (or delay_days * 200)
+                estCost = daysInput > 0 ? (daysInput * 200) : 500;
+            } else if (excTypeLower.includes('damage')) {
+                // Cargo damage report: Fixed cost of 1000
+                estCost = 1000;
+            } else if (excTypeLower.includes('reroute') || excTypeLower.includes('diversion')) {
+                // Reroute / Diversion: Fixed cost of 300
+                estCost = 300;
+            } else if (excTypeLower.includes('doc') || excTypeLower.includes('mismatch')) {
+                // Documentation mismatch: Fixed cost of 200
+                estCost = 200;
+            } else {
+                estCost = daysInput * 150;
+            }
+
+            calcDisplay.innerText = `$${estCost.toFixed(2)} USD`;
+            calcDisplay.className = 'text-xs font-bold text-red-600';
+        }
+
+        const updateEstimatedCostUI = updateCostPreview;
+        window.updateCostPreview = updateCostPreview;
+        window.updateEstimatedCostUI = updateEstimatedCostUI;
+
+        // --- DATA FETCHING & STATE MANAGEMENT ---
+        async function loadAllData() {
+            console.log("loadAllData called");
+            await Promise.all([fetchShipments(), fetchExceptions()]);
+            updateKPIs();
+        }
+
+        async function fetchShipments() {
+            try {
+                const res = await fetch(`${API_BASE}/api/shipments`);
+                if (!res.ok) throw new Error('Failed to fetch shipments');
+                shipmentsList = await res.json();
+                console.log("Shipments loaded:", shipmentsList.length);
+                renderShipmentsDropdown();
+                renderShipmentsTable();
+            } catch (err) {
+                console.error('Error fetching shipments:', err);
+                document.getElementById('shipmentsTableBody').innerHTML = `
+                    <tr><td colspan="5" class="px-3.5 py-4 text-center text-red-500 text-xs">
+                        <i class="fa-solid fa-circle-exclamation mr-1"></i> Could not connect to API server (${API_BASE}).
+                    </td></tr>
+                `;
+            }
+        }
+
+        async function fetchExceptions() {
+            try {
+                const res = await fetch(`${API_BASE}/api/exceptions`);
+                if (!res.ok) throw new Error('Failed to fetch exceptions');
+                exceptionsList = await res.json();
+                console.log("Exceptions loaded:", exceptionsList.length);
+                renderExceptionsFeed();
+                updateChartData(exceptionsList);
+            } catch (err) {
+                console.error('Error fetching exceptions:', err);
+                document.getElementById('exceptionsFeed').innerHTML = `
+                    <div class="bg-white rounded-xl border border-red-200 p-6 text-center text-red-500 text-xs">
+                        <i class="fa-solid fa-circle-exclamation mr-1"></i> Could not load exceptions from ${API_BASE}.
+                    </div>
+                `;
+            }
+        }
+
+        function updateKPIs() {
+            // Est. Financial Impact Total
+            const totalCost = exceptionsList.reduce((sum, item) => sum + (parseFloat(item.estimated_cost) || 0), 0);
+            document.getElementById('estFinancialImpact').innerText = `$${totalCost.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+
+            // Critical / High Severity Count
+            const critHigh = exceptionsList.filter(e => {
+                const sev = (e.severity || '').toLowerCase();
+                return sev === 'critical' || sev === 'high';
+            }).length;
+            document.getElementById('criticalHighCount').innerText = critHigh;
+
+            // Monitored Cargo Count
+            document.getElementById('monitoredCargoCount').innerText = shipmentsList.length;
+
+            // Header Badges
+            document.getElementById('totalIncidentsBadge').innerText = `${exceptionsList.length} Total Incidents`;
+            document.getElementById('recordsCountBadge').innerText = `${exceptionsList.length} Records`;
+        }
+
+        function renderShipmentsDropdown() {
+            const select = document.getElementById('shipmentSelect');
+            select.innerHTML = '<option value="">-- Choose Shipment --</option>';
+
+            shipmentsList.forEach(ship => {
+                const opt = document.createElement('option');
+                opt.value = ship._id || ship.id;
+                opt.innerText = `${ship.bl_number} (${ship.container_id}) - ${ship.origin} → ${ship.destination}`;
+                select.appendChild(opt);
+            });
+        }
+
+        function renderShipmentsTable() {
+            const tbody = document.getElementById('shipmentsTableBody');
+            if (shipmentsList.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="px-3.5 py-6 text-center text-slate-400">No shipments recorded yet. Register one above.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = shipmentsList.map(ship => {
+                const dateStr = ship.created_at ? new Date(ship.created_at).toLocaleDateString() : 'N/A';
+                const isException = (ship.current_status || '').toLowerCase().includes('exception');
+                const badgeClass = isException
+                    ? 'bg-red-50 text-red-600 border border-red-200'
+                    : 'bg-blue-50 text-blue-600 border border-blue-200';
+
+                return `
+                    <tr class="hover:bg-slate-50/70 transition">
+                        <td class="px-3.5 py-2.5 font-mono font-bold text-slate-800">${escapeHtml(ship.bl_number)}</td>
+                        <td class="px-3.5 py-2.5 font-mono text-slate-600">${escapeHtml(ship.container_id)}</td>
+                        <td class="px-3.5 py-2.5 text-slate-700 font-medium">${escapeHtml(ship.origin)} &rarr; ${escapeHtml(ship.destination)}</td>
+                        <td class="px-3.5 py-2.5">
+                            <span class="${badgeClass} text-[11px] font-semibold px-2 py-0.5 rounded-full inline-flex items-center gap-1">
+                                ${escapeHtml(ship.current_status || 'In Transit')}
+                            </span>
+                        </td>
+                        <td class="px-3.5 py-2.5 text-slate-400 font-mono text-[11px]">${dateStr}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function renderExceptionsFeed() {
+            const feed = document.getElementById('exceptionsFeed');
+            if (exceptionsList.length === 0) {
+                feed.innerHTML = `<div class="bg-white rounded-xl border border-slate-200 p-8 text-center text-slate-400 text-xs">No exception incidents recorded. Select a shipment above to trigger AI analysis.</div>`;
+                return;
+            }
+
+            feed.innerHTML = exceptionsList.map(exc => {
+                const excId = exc._id || exc.id;
+                const severity = (exc.severity || 'Medium').toLowerCase();
+
+                let sevBadgeClass = 'bg-amber-50 text-amber-700 border-amber-300';
+                if (severity === 'critical') sevBadgeClass = 'bg-red-50 text-red-600 border-red-300';
+                else if (severity === 'low') sevBadgeClass = 'bg-emerald-50 text-emerald-700 border-emerald-300';
+
+                const sevLabel = `${(exc.severity || 'Medium').charAt(0).toUpperCase() + (exc.severity || 'Medium').slice(1)} Severity`;
+
+                const loggedDate = exc.created_at ? new Date(exc.created_at).toLocaleString() : 'N/A';
+                const updatedDate = exc.status_updated_at ? new Date(exc.status_updated_at).toLocaleTimeString() : (exc.created_at ? new Date(exc.created_at).toLocaleTimeString() : 'N/A');
+
+                const status = (exc.status || 'Open').toUpperCase();
+                const statusClass = status === 'ESCALATED'
+                    ? 'bg-purple-50 text-purple-700 border-purple-200'
+                    : 'bg-slate-100 text-slate-600 border-slate-200';
+
+                // SOP Recommendations
+                let recsHtml = '';
+                if (Array.isArray(exc.ai_recommendations) && exc.ai_recommendations.length > 0) {
+                    recsHtml = exc.ai_recommendations.map(r => {
+                        const isCritical = r.toLowerCase().includes('critical escalation') || r.toLowerCase().includes('escalat');
+                        const textClass = isCritical ? 'text-red-600 font-semibold' : 'text-slate-700';
+                        return `<li class="${textClass} leading-relaxed"><span class="text-blue-500 mr-1.5">•</span>${escapeHtml(r)}</li>`;
+                    }).join('');
+                } else {
+                    recsHtml = `
+                        <li class="leading-relaxed"><span class="text-blue-500 mr-1.5">•</span>Assess carrier options manually</li>
+                        <li class="leading-relaxed"><span class="text-blue-500 mr-1.5">•</span>Contact destination terminal</li>
+                        <li class="leading-relaxed"><span class="text-blue-500 mr-1.5">•</span>Alert customs broker</li>
+                    `;
+                }
+
+                const draftMsg = exc.ai_draft_message || 'No client notification drafted.';
+                const shipmentId = exc.shipment_id || '';
+
+                return `
+                    <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4 space-y-3.5 transition hover:shadow-md" id="card-${excId}">
+                        
+                        <!-- Top Header Row -->
+                        <div class="flex items-start justify-between gap-3">
+                            <div>
+                                <div class="flex items-center gap-2">
+                                    <h3 class="text-slate-900 font-bold text-sm">${escapeHtml(exc.exception_type)}</h3>
+                                    <span class="${statusClass} text-[10px] font-bold px-2 py-0.5 rounded border uppercase tracking-wider">${status}</span>
+                                </div>
+                                <p class="text-slate-400 text-[11px] mt-0.5">Logged on: ${loggedDate} &bull; Updated: ${updatedDate}</p>
+                            </div>
+                            <span class="${sevBadgeClass} border text-xs font-bold px-3 py-1 rounded-md shadow-2xs">${sevLabel}</span>
+                        </div>
+
+                        <!-- Incident Details Box -->
+                        <div class="bg-slate-50 border border-slate-200/80 rounded-lg px-3 py-2 text-xs text-slate-700">
+                            <strong class="text-slate-900">Incident Details:</strong> ${escapeHtml(exc.description)}
+                        </div>
+
+                        <!-- AI Operational Next Steps & SOP Compliance Box -->
+                        <div class="bg-[#f0f7ff] border border-blue-200 rounded-lg p-3 space-y-2">
+                            <div class="flex items-center gap-1.5 text-slate-800 font-bold text-[11px] uppercase tracking-wider">
+                                <i class="fa-solid fa-square-check text-blue-600"></i>
+                                <span>AI OPERATIONAL NEXT STEPS & SOP COMPLIANCE</span>
+                            </div>
+                            <ul class="space-y-1 text-xs pl-1">
+                                ${recsHtml}
+                            </ul>
+                        </div>
+
+                        <!-- AI Drafted Client Notification Box -->
+                        <div class="bg-white border border-slate-200 rounded-lg p-3 space-y-2">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-1.5 text-slate-700 font-bold text-[11px] uppercase tracking-wider">
+                                    <i class="fa-regular fa-envelope text-slate-500"></i>
+                                    <span>AI DRAFTED CLIENT NOTIFICATION</span>
+                                </div>
+                                <span class="font-mono text-[10px] text-slate-400 font-semibold">Gemini GenAI</span>
+                            </div>
+                            <div class="bg-slate-50/80 border border-slate-200 rounded-md p-3 font-mono text-[11px] text-slate-800 whitespace-pre-wrap leading-relaxed max-h-60 overflow-y-auto">${escapeHtml(draftMsg)}</div>
+                        </div>
+
+                        <!-- Execute Action Bar (WhatsApp, Email, Escalate) -->
+                        <div class="pt-2 border-t border-slate-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2.5">
+                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">EXECUTE ACTION:</span>
+                            <div class="flex items-center gap-2">
+                                <button onclick="sendWhatsApp('${escapeJs(draftMsg)}')" 
+                                    class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold px-3 py-1.5 rounded-md flex items-center gap-1.5 transition shadow-sm cursor-pointer" title="Send draft via WhatsApp in new window">
+                                    <i class="fa-brands fa-whatsapp"></i>
+                                    <span>WhatsApp</span>
+                                </button>
+                                <button onclick="sendEmail('${escapeJs(draftMsg)}', '${escapeJs(exc.exception_type)}')" 
+                                    class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold px-3 py-1.5 rounded-md flex items-center gap-1.5 transition shadow-sm cursor-pointer" title="Open draft in Email client in new tab">
+                                    <i class="fa-solid fa-envelope"></i>
+                                    <span>Email</span>
+                                </button>
+                                <button onclick="triggerEscalation('${excId}', '${shipmentId}')" 
+                                    class="bg-purple-600 hover:bg-purple-700 text-white text-xs font-semibold px-3 py-1.5 rounded-md flex items-center gap-1.5 transition shadow-sm cursor-pointer" title="Escalate exception with formal carrier notice">
+                                    <i class="fa-solid fa-bolt"></i>
+                                    <span>Escalate</span>
+                                </button>
+                            </div>
+                        </div>
+
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // --- ACTION HANDLERS ---
+        async function handleShipmentSubmit(e) {
+            e.preventDefault();
+            console.log("Save Shipment submitted");
+            const btn = document.getElementById('btnSaveShipment');
+            const origHtml = btn.innerHTML;
+            btn.innerHTML = `<span class="spinner"></span> <span>Saving...</span>`;
+            btn.disabled = true;
+
+            const payload = {
+                bl_number: document.getElementById('blNumber').value.trim(),
+                container_id: document.getElementById('containerId').value.trim(),
+                origin: document.getElementById('originPort').value.trim(),
+                destination: document.getElementById('destPort').value.trim(),
+                current_status: 'In Transit'
+            };
+
+            try {
+                const res = await fetch(`${API_BASE}/api/shipments`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!res.ok) {
+                    const err = await res.json();
+                    throw new Error(err.detail || 'Failed to register shipment');
+                }
+
+                showToast(`Shipment ${payload.bl_number} registered successfully!`, 'success');
+                document.getElementById('shipmentForm').reset();
+                await loadAllData();
+            } catch (err) {
+                console.error("Save shipment error:", err);
+                showToast(err.message, 'error');
+            } finally {
+                btn.innerHTML = origHtml;
+                btn.disabled = false;
+            }
+        }
+
+        async function handleExceptionSubmit(e) {
+            e.preventDefault();
+            console.log("Run Multi-Agent Analysis submitted");
+            const shipmentId = document.getElementById('shipmentSelect').value;
+            if (!shipmentId) {
+                showToast('Please select a shipment from the dropdown.', 'error');
+                return;
+            }
+
+            const btn = document.getElementById('btnRunAgent');
+            const origHtml = btn.innerHTML;
+            btn.innerHTML = `<span class="spinner"></span> <span>Running LangGraph Agent...</span>`;
+            btn.disabled = true;
+
+            const payload = {
+                shipment_id: shipmentId,
+                exception_type: document.getElementById('exceptionType').value,
+                description: document.getElementById('description').value.trim(),
+                delay_days: parseFloat(document.getElementById('delayDays').value) || 0.0,
+                severity: 'Medium'
+            };
+
+            try {
+                const res = await fetch(`${API_BASE}/api/exceptions`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!res.ok) {
+                    const err = await res.json();
+                    throw new Error(err.detail || 'AI Multi-Agent processing error');
+                }
+
+                showToast('Multi-Agent Analysis complete! Incident logged.', 'success');
+                document.getElementById('exceptionForm').reset();
+                updateCostPreview();
+                await loadAllData();
+            } catch (err) {
+                console.error("Exception engine error:", err);
+                showToast(err.message, 'error');
+            } finally {
+                btn.innerHTML = origHtml;
+                btn.disabled = false;
+            }
+        }
+
+        // --- EXPORT TO PDF & CSV ---
+        function exportPDF() {
+            console.log("Export PDF clicked");
+            if (typeof window.jspdf === 'undefined') {
+                showToast('PDF generator is initializing. Please try again in a moment.', 'error');
+                return;
+            }
+
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF('landscape');
+
+            // Header Banner
+            doc.setFillColor(11, 30, 54);
+            doc.rect(0, 0, 297, 24, 'F');
+
+            doc.setFontSize(13);
+            doc.setTextColor(255, 255, 255);
+            doc.setFont('helvetica', 'bold');
+            doc.text('Powerhouse Logistics - Cargo Exception Incident Report', 14, 15);
+
+            doc.setFontSize(9);
+            doc.setTextColor(148, 163, 184);
+            doc.text(`Generated: ${new Date().toLocaleString()}`, 215, 15);
+
+            // Table Data Preparation
+            const tableRows = exceptionsList.map((exc, index) => {
+                const ship = shipmentsList.find(s => (s._id || s.id) === exc.shipment_id);
+                const shipRef = ship ? `${ship.bl_number} (${ship.container_id})` : (exc.shipment_id ? exc.shipment_id.substring(0, 8) : 'N/A');
+                const dateStr = exc.created_at ? new Date(exc.created_at).toLocaleDateString() : 'N/A';
+                const costStr = `$${(parseFloat(exc.estimated_cost) || 0).toFixed(2)}`;
+
+                return [
+                    index + 1,
+                    dateStr,
+                    exc.exception_type || 'N/A',
+                    exc.severity || 'Medium',
+                    costStr,
+                    exc.status || 'Open',
+                    shipRef,
+                    (exc.description || '').substring(0, 60) + ((exc.description || '').length > 60 ? '...' : '')
+                ];
+            });
+
+            doc.autoTable({
+                head: [['#', 'Date', 'Exception Type', 'Severity', 'Est. Cost', 'Status', 'Shipment Reference', 'Description']],
+                body: tableRows,
+                startY: 30,
+                theme: 'striped',
+                headStyles: {
+                    fillColor: [27, 58, 107],
+                    textColor: [255, 255, 255],
+                    fontSize: 9,
+                    fontStyle: 'bold'
+                },
+                bodyStyles: {
+                    fontSize: 8,
+                    textColor: [15, 23, 42]
+                },
+                alternateRowStyles: {
+                    fillColor: [248, 250, 252]
+                },
+                margin: { left: 14, right: 14 }
+            });
+
+            doc.save(`Cargo_Exception_Report_${Date.now()}.pdf`);
+            showToast('Exception Report downloaded as PDF.', 'success');
+        }
+
+        function exportCSV() {
+            console.log("Export CSV clicked");
+            if (exceptionsList.length === 0) {
+                showToast('No exception records to export.', 'error');
+                return;
+            }
+
+            const headers = ['ID', 'Created At', 'Exception Type', 'Severity', 'Estimated Cost (USD)', 'Status', 'Shipment ID', 'Description'];
+            const rows = exceptionsList.map(exc => [
+                `"${exc._id || exc.id || ''}"`,
+                `"${exc.created_at || ''}"`,
+                `"${(exc.exception_type || '').replace(/"/g, '""')}"`,
+                `"${exc.severity || 'Medium'}"`,
+                parseFloat(exc.estimated_cost) || 0,
+                `"${exc.status || 'Open'}"`,
+                `"${exc.shipment_id || ''}"`,
+                `"${(exc.description || '').replace(/"/g, '""')}"`
+            ]);
+
+            const csvContent = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.setAttribute('href', url);
+            link.setAttribute('download', `Cargo_Exceptions_${Date.now()}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            showToast('Exceptions downloaded as CSV.', 'success');
+        }
+
+        // --- ESCAPING UTILITIES ---
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
+        function escapeJs(str) {
+            if (!str) return '';
+            return String(str)
+                .replace(/\\/g, '\\\\')
+                .replace(/'/g, "\\'")
+                .replace(/"/g, '\\"')
+                .replace(/\n/g, '\\n')
+                .replace(/\r/g, '');
+        }
+    </script>
+</body>
+
+</html>

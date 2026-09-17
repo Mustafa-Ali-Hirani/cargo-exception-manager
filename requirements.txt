@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+motor
+pydantic
+email-validator
+python-dotenv
+langgraph
+google-genai
+pyjwt
