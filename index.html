@@ -74,6 +74,8 @@
             background: #94a3b8;
         }
 
+        cargo-exception-manager.onrender.com
+
         /* Spinner */
         .spinner {
             display: inline-block;
@@ -579,7 +581,7 @@
     <!-- APPLICATION JAVASCRIPT LOGIC                                              -->
     <!-- ========================================================================= -->
     <script>
-        // API Base URL - Configured to talk directly to http://localhost:8000/api
+        const API_BASE = "https://cargo-exception-manager.onrender.com/api";
         const API_BASE = window.location.protocol.startsWith('http') && window.location.port !== '5500' && window.location.port !== '3000' && window.location.port !== '5173' && window.location.port !== ''
             ? ''
             : 'http://127.0.0.1:8000';
