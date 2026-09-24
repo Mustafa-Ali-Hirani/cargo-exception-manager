@@ -48,7 +48,7 @@ JWT_SECRET = os.getenv("JWT_SECRET", "super_secret_fallback_key")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/login")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 
 # Helper functions for BSON ObjectId to String conversions
 def clean_mongo_doc(doc):
@@ -69,6 +69,7 @@ async def startup_db_client():
 # 1. AUTHENTICATION ENDPOINTS
 # ==========================================
 
+@app.post("/auth/signup", response_model=UserResponse)
 @app.post("/api/auth/signup", response_model=UserResponse)
 async def signup(user: UserCreate):
     # Check if user already exists
@@ -90,6 +91,7 @@ async def signup(user: UserCreate):
     return clean_mongo_doc(created_user)
 
 
+@app.post("/auth/login")
 @app.post("/api/auth/login")
 async def login(user: UserCreate):
     db_user = await db.users.find_one({"email": user.email})
@@ -123,6 +125,7 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
 # 2. SHIPMENT ENDPOINTS
 # ==========================================
 
+@app.post("/shipments", response_model=ShipmentResponse)
 @app.post("/api/shipments", response_model=ShipmentResponse)
 async def create_shipment(shipment: ShipmentCreate):
     new_ship = shipment.dict()
@@ -133,6 +136,7 @@ async def create_shipment(shipment: ShipmentCreate):
     return clean_mongo_doc(inserted)
 
 
+@app.get("/shipments", response_model=List[ShipmentResponse])
 @app.get("/api/shipments", response_model=List[ShipmentResponse])
 async def list_shipments():
     cursor = db.shipments.find().sort("created_at", -1)
@@ -143,6 +147,7 @@ async def list_shipments():
 # 3. EXCEPTION HANDLING ENDPOINTS (LANGGRAPH TRIGGER)
 # ==========================================
 
+@app.post("/exceptions", response_model=ExceptionResponse)
 @app.post("/api/exceptions", response_model=ExceptionResponse)
 async def process_exception(payload: ExceptionCreate):
     # 1. Verify associated shipment exists
@@ -220,6 +225,7 @@ async def process_exception(payload: ExceptionCreate):
     return clean_mongo_doc(saved_record)
 
 
+@app.get("/exceptions", response_model=List[ExceptionResponse])
 @app.get("/api/exceptions", response_model=List[ExceptionResponse])
 async def list_exceptions():
     cursor = db.exceptions.find().sort("created_at", -1)
@@ -231,6 +237,7 @@ async def list_exceptions():
 # 4. CARRIER ESCALATION ENDPOINT
 # ==========================================
 
+@app.post("/exceptions/escalate", response_model=EscalationResponse)
 @app.post("/api/exceptions/escalate", response_model=EscalationResponse)
 async def escalate_exception(payload: EscalationRequest):
     """Drafts a formal escalation email to a carrier regarding a critical shipment exception."""
