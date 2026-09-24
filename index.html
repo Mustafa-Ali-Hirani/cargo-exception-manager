@@ -581,13 +581,9 @@
     <!-- APPLICATION JAVASCRIPT LOGIC                                              -->
     <!-- ========================================================================= -->
     <script>
+        // Force the app to use the live production URL
         const API_BASE = "https://cargo-exception-manager.onrender.com/api";
-        const API_BASE = window.location.protocol.startsWith('http') && window.location.port !== '5500' && window.location.port !== '3000' && window.location.port !== '5173' && window.location.port !== ''
-            ? ''
-            : 'http://127.0.0.1:8000';
 
-        let shipmentsList = [];
-        let exceptionsList = [];
         let chartInstance = null;
         let activeEscalationData = null;
 
