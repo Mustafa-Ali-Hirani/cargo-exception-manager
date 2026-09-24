@@ -581,9 +581,12 @@
     <!-- APPLICATION JAVASCRIPT LOGIC                                              -->
     <!-- ========================================================================= -->
     <script>
-        // Force the app to use the live production URL
-        const API_BASE = "https://cargo-exception-manager.onrender.com";
+        // Base API URL configuration (sanitized to avoid double /api)
+        const RAW_API_BASE = "https://cargo-exception-manager.onrender.com";
+        const API_BASE = RAW_API_BASE.replace(/\/api\/?$/, '').replace(/\/+$/, '');
 
+        let shipmentsList = [];
+        let exceptionsList = [];
         let chartInstance = null;
         let activeEscalationData = null;
 
@@ -954,23 +957,26 @@
         }
 
         function updateKPIs() {
+            const list = Array.isArray(exceptionsList) ? exceptionsList : [];
+            const sList = Array.isArray(shipmentsList) ? shipmentsList : [];
+
             // Est. Financial Impact Total
-            const totalCost = exceptionsList.reduce((sum, item) => sum + (parseFloat(item.estimated_cost) || 0), 0);
+            const totalCost = list.reduce((sum, item) => sum + (parseFloat(item.estimated_cost) || 0), 0);
             document.getElementById('estFinancialImpact').innerText = `$${totalCost.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
             // Critical / High Severity Count
-            const critHigh = exceptionsList.filter(e => {
+            const critHigh = list.filter(e => {
                 const sev = (e.severity || '').toLowerCase();
                 return sev === 'critical' || sev === 'high';
             }).length;
             document.getElementById('criticalHighCount').innerText = critHigh;
 
             // Monitored Cargo Count
-            document.getElementById('monitoredCargoCount').innerText = shipmentsList.length;
+            document.getElementById('monitoredCargoCount').innerText = sList.length;
 
             // Header Badges
-            document.getElementById('totalIncidentsBadge').innerText = `${exceptionsList.length} Total Incidents`;
-            document.getElementById('recordsCountBadge').innerText = `${exceptionsList.length} Records`;
+            document.getElementById('totalIncidentsBadge').innerText = `${list.length} Total Incidents`;
+            document.getElementById('recordsCountBadge').innerText = `${list.length} Records`;
         }
 
         function renderShipmentsDropdown() {

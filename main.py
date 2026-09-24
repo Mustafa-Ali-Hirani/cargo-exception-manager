@@ -71,6 +71,7 @@ async def startup_db_client():
 
 @app.post("/auth/signup", response_model=UserResponse)
 @app.post("/api/auth/signup", response_model=UserResponse)
+@app.post("/api/api/auth/signup", response_model=UserResponse)
 async def signup(user: UserCreate):
     # Check if user already exists
     existing_user = await db.users.find_one({"email": user.email})
@@ -93,6 +94,7 @@ async def signup(user: UserCreate):
 
 @app.post("/auth/login")
 @app.post("/api/auth/login")
+@app.post("/api/api/auth/login")
 async def login(user: UserCreate):
     db_user = await db.users.find_one({"email": user.email})
     if not db_user or db_user["password"] != hash_password(user.password):
@@ -127,6 +129,7 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
 
 @app.post("/shipments", response_model=ShipmentResponse)
 @app.post("/api/shipments", response_model=ShipmentResponse)
+@app.post("/api/api/shipments", response_model=ShipmentResponse)
 async def create_shipment(shipment: ShipmentCreate):
     new_ship = shipment.dict()
     new_ship["created_at"] = datetime.utcnow()
@@ -138,6 +141,7 @@ async def create_shipment(shipment: ShipmentCreate):
 
 @app.get("/shipments", response_model=List[ShipmentResponse])
 @app.get("/api/shipments", response_model=List[ShipmentResponse])
+@app.get("/api/api/shipments", response_model=List[ShipmentResponse])
 async def list_shipments():
     cursor = db.shipments.find().sort("created_at", -1)
     shipments = await cursor.to_list(length=100)
@@ -149,6 +153,7 @@ async def list_shipments():
 
 @app.post("/exceptions", response_model=ExceptionResponse)
 @app.post("/api/exceptions", response_model=ExceptionResponse)
+@app.post("/api/api/exceptions", response_model=ExceptionResponse)
 async def process_exception(payload: ExceptionCreate):
     # 1. Verify associated shipment exists
     try:
@@ -227,6 +232,7 @@ async def process_exception(payload: ExceptionCreate):
 
 @app.get("/exceptions", response_model=List[ExceptionResponse])
 @app.get("/api/exceptions", response_model=List[ExceptionResponse])
+@app.get("/api/api/exceptions", response_model=List[ExceptionResponse])
 async def list_exceptions():
     cursor = db.exceptions.find().sort("created_at", -1)
     records = await cursor.to_list(length=100)
@@ -239,6 +245,7 @@ async def list_exceptions():
 
 @app.post("/exceptions/escalate", response_model=EscalationResponse)
 @app.post("/api/exceptions/escalate", response_model=EscalationResponse)
+@app.post("/api/api/exceptions/escalate", response_model=EscalationResponse)
 async def escalate_exception(payload: EscalationRequest):
     """Drafts a formal escalation email to a carrier regarding a critical shipment exception."""
     exception_doc = None
